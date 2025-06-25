@@ -8,6 +8,7 @@ public class EventsApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(EventsApplication.class, args);
+		System.out.println("Starting Events Application...");
 	}
 
 }
