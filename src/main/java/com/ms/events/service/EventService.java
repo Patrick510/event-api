@@ -1,5 +1,6 @@
 package com.ms.events.service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -48,10 +49,12 @@ public class EventService {
     event.setRegisteredParticipants(event.getRegisteredParticipants() + 1);
     eventRepository.save(event);
 
+    String formattedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(event.getDate());
+
     emailMessageProducer.sendEmailMessage(
         subscription.getParticipantEmail(),
         event.getTitle(),
-        event.getDate().toString());
+        formattedDate);
 
     return savedSubscription;
   }
