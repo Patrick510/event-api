@@ -1,6 +1,5 @@
 package com.ms.events.service;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -21,6 +20,9 @@ public class EventService {
   @Autowired
   private SubscriptionRepository subscriptionRepository;
 
+  @Autowired
+  private EmailMessageProducer emailMessageProducer;
+
   public List<EventModel> getAllEvents() {
     return eventRepository.findAll();
   }
@@ -40,10 +42,16 @@ public class EventService {
     if (event.getRegisteredParticipants() >= event.getMaxParticipants()) {
       throw new RuntimeException("Cannot register for past events");
     }
+
     subscription.setEvent(event);
     SubscriptionModel savedSubscription = subscriptionRepository.save(subscription);
     event.setRegisteredParticipants(event.getRegisteredParticipants() + 1);
     eventRepository.save(event);
+
+    emailMessageProducer.sendEmailMessage(
+        subscription.getParticipantEmail(),
+        event.getTitle(),
+        event.getDate().toString());
 
     return savedSubscription;
   }
