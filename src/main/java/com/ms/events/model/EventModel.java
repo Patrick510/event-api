@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.TemporalType;
 import lombok.Data;
-import jakarta.persistence.Temporal;
 // import jakarta.validation.constraints.Min;
 // import jakarta.validation.constraints.NotBlank;
 
@@ -29,7 +29,7 @@ public class EventModel {
 
   private int registeredParticipants;
 
-  @Temporal(TemporalType.TIMESTAMP)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
   private Date date;
 
   // @NotBlank
