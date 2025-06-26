@@ -1,5 +1,6 @@
 package com.ms.events.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,9 +11,9 @@ public interface EventRepository extends JpaRepository<EventModel, Long> {
 
   List<EventModel> findByTitleContainingIgnoreCase(String title);
 
-  List<EventModel> findByDate(String date);
+  List<EventModel> findByDate(Date date);
 
-  List<EventModel> findByTitleContainingIgnoreCaseAndDate(String title, String date);
+  List<EventModel> findByTitleContainingIgnoreCaseAndDate(String title, Date date);
 
-  List<EventModel> findByEventDateAfter(java.time.LocalDate date);
+  List<EventModel> findByDateAfter(Date date);
 }

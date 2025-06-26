@@ -1,6 +1,7 @@
 package com.ms.events.service;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class EventService {
   }
 
   public List<EventModel> getUpcommingEvents() {
-    return eventRepository.findByEventDateAfter(LocalDate.now());
+    return eventRepository.findByDateAfter(new Date());
   }
 
   public EventModel createEvent(EventModel event) {
