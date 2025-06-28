@@ -1,9 +1,9 @@
 package com.ms.events.service;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +22,7 @@ public class EventService {
   private SubscriptionRepository subscriptionRepository;
 
   @Autowired
-  private EmailMessageProducer emailMessageProducer;
+  private AmqpTemplate amqpTemplate; // Para enviar mensagens ao RabbitMQ
 
   public List<EventModel> getAllEvents() {
     return eventRepository.findAll();
@@ -41,20 +41,21 @@ public class EventService {
         .orElseThrow(() -> new RuntimeException("Event not found"));
 
     if (event.getRegisteredParticipants() >= event.getMaxParticipants()) {
-      throw new RuntimeException("Cannot register for past events");
+      throw new RuntimeException("Event is full");
     }
 
     subscription.setEvent(event);
     SubscriptionModel savedSubscription = subscriptionRepository.save(subscription);
+
     event.setRegisteredParticipants(event.getRegisteredParticipants() + 1);
     eventRepository.save(event);
 
-    String formattedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(event.getDate());
-
-    emailMessageProducer.sendEmailMessage(
+    EventEmailDto emailDto = new EventEmailDto(
         subscription.getParticipantEmail(),
         event.getTitle(),
-        formattedDate);
+        event.getDate().toString());
+
+    amqpTemplate.convertAndSend("ms.events", emailDto);
 
     return savedSubscription;
   }
