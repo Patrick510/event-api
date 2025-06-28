@@ -1,5 +1,6 @@
 package com.ms.events.service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -22,7 +23,10 @@ public class EventService {
   private SubscriptionRepository subscriptionRepository;
 
   @Autowired
-  private AmqpTemplate amqpTemplate; // Para enviar mensagens ao RabbitMQ
+  private AmqpTemplate amqpTemplate;
+
+  @Autowired
+  private EmailMessageProducer emailMessageProducer;
 
   public List<EventModel> getAllEvents() {
     return eventRepository.findAll();
@@ -50,12 +54,12 @@ public class EventService {
     event.setRegisteredParticipants(event.getRegisteredParticipants() + 1);
     eventRepository.save(event);
 
-    EventEmailDto emailDto = new EventEmailDto(
+    String formattedDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(event.getDate());
+
+    emailMessageProducer.sendEmailMessage(
         subscription.getParticipantEmail(),
         event.getTitle(),
-        event.getDate().toString());
-
-    amqpTemplate.convertAndSend("ms.events", emailDto);
+        formattedDate);
 
     return savedSubscription;
   }
