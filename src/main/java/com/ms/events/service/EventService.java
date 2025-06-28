@@ -1,6 +1,5 @@
 package com.ms.events.service;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -8,6 +7,7 @@ import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ms.events.messaging.EmailMessageProducer;
 import com.ms.events.model.EventModel;
 import com.ms.events.model.SubscriptionModel;
 import com.ms.events.repository.EventRepository;
@@ -54,12 +54,10 @@ public class EventService {
     event.setRegisteredParticipants(event.getRegisteredParticipants() + 1);
     eventRepository.save(event);
 
-    String formattedDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(event.getDate());
-
     emailMessageProducer.sendEmailMessage(
         subscription.getParticipantEmail(),
         event.getTitle(),
-        formattedDate);
+        event.getDate());
 
     return savedSubscription;
   }
