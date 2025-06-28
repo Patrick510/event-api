@@ -14,7 +14,7 @@ public class EmailMessageProducer {
   @Autowired
   private RabbitTemplate rabbitTemplate;
 
-  ppublic void sendEmailMessage(String emailTo, String eventTitle, Date eventDate) {
+  public void sendEmailMessage(String emailTo, String eventTitle, Date eventDate) {
     Map<String, Object> message = new HashMap<>();
     message.put("emailTo", emailTo);
     message.put("eventTitle", eventTitle);
